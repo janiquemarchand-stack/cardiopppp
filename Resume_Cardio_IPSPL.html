@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Résumé Cardio — IPSPL</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181c25;
+  --surface2: #1e2332;
+  --border: #2a3045;
+  --text: #e8eaf0;
+  --muted: #7a8199;
+  --plus: #2dd4a0;
+  --plus-bg: #0d2e24;
+  --plus-border: #1a4d3a;
+  --minus: #f87171;
+  --minus-bg: #2a1212;
+  --minus-border: #4a2020;
+  --accent: #60a5fa;
+  --accent-bg: #0d1e35;
+  --warn: #fbbf24;
+  --warn-bg: #2a1f0a;
+  --purple: #a78bfa;
+  --purple-bg: #1a1530;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.5;
+  padding: 2rem 1.5rem 4rem;
+}
+.page-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+.page-header h1 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+.page-header p {
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+.legend {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.leg-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted); }
+.dot { width: 8px; height: 8px; border-radius: 50%; }
+.dot-plus { background: var(--plus); }
+.dot-minus { background: var(--minus); }
+.dot-inv { background: var(--accent); }
+.dot-rx { background: var(--warn); }
+.dot-red { background: #f97316; }
+.section { margin-bottom: 2rem; }
+.section-title {
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 0.75rem;
+  padding-left: 4px;
+  border-left: 2px solid var(--border);
+  padding-left: 8px;
+}
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 12px; }
+.grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface2);
+}
+.card-icon {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--muted);
+  background: var(--border);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+.card-title { font-size: 13px; font-weight: 600; color: var(--text); }
+.card-sub { font-size: 11px; color: var(--muted); margin-top: 1px; }
+.card-body { padding: 12px 14px; }
+.two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.col-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  display: inline-block;
+}
+.label-plus { color: var(--plus); background: var(--plus-bg); border: 1px solid var(--plus-border); }
+.label-minus { color: var(--minus); background: var(--minus-bg); border: 1px solid var(--minus-border); }
+.label-inv { color: var(--accent); background: var(--accent-bg); }
+.label-rx { color: var(--warn); background: var(--warn-bg); }
+.label-red { color: #f97316; background: #2a1500; }
+.item-list { list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.item-list li {
+  font-size: 12px;
+  color: var(--text);
+  padding: 4px 8px;
+  border-radius: 5px;
+  line-height: 1.4;
+}
+.item-list li.plus { background: var(--plus-bg); border-left: 2px solid var(--plus); color: #a7f3d0; }
+.item-list li.minus { background: var(--minus-bg); border-left: 2px solid var(--minus); color: #fca5a5; }
+.item-list li.inv { background: var(--accent-bg); border-left: 2px solid var(--accent); color: #bfdbfe; }
+.item-list li.rx { background: var(--warn-bg); border-left: 2px solid var(--warn); color: #fde68a; }
+.item-list li.red { background: #2a1500; border-left: 2px solid #f97316; color: #fdba74; }
+.item-list li.neutral { background: var(--surface2); border-left: 2px solid var(--border); color: var(--muted); }
+.tag {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 5px;
+  border-radius: 3px;
+  margin-right: 3px;
+  vertical-align: middle;
+}
+.tag-urgence { background: #4a2020; color: #f87171; }
+.tag-clé { background: #1a1530; color: #a78bfa; }
+.divider { height: 1px; background: var(--border); margin: 10px 0; }
+.score-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+.score-box {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 8px 10px;
+}
+.score-box .score-name { font-size: 10px; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 4px; }
+.score-box .score-val { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--accent); }
+.full-card { grid-column: 1 / -1; }
+.three-col { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.algo-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--border);
+}
+.algo-row:last-child { border-bottom: none; }
+.algo-step {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--accent);
+  background: var(--accent-bg);
+  padding: 2px 6px;
+  border-radius: 4px;
+  white-space: nowrap;
+  min-width: 40px;
+  text-align: center;
+}
+.algo-text { font-size: 12px; color: var(--text); line-height: 1.4; }
+.arrow { color: var(--muted); margin: 0 4px; }
+em { color: var(--warn); font-style: normal; font-weight: 500; }
+strong { color: var(--text); font-weight: 600; }
+.badge-row { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 6px; }
+.badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+.badge-teal { background: #0d2e24; color: #2dd4a0; border: 1px solid #1a4d3a; }
+.badge-red { background: #2a1212; color: #f87171; border: 1px solid #4a2020; }
+.badge-blue { background: #0d1e35; color: #60a5fa; border: 1px solid #1a3a6e; }
+.badge-orange { background: #2a1500; color: #fb923c; border: 1px solid #4a2800; }
+.badge-purple { background: #1a1530; color: #a78bfa; border: 1px solid #3a2870; }
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <h1>Système cardiovasculaire — Résumé clinique</h1>
+  <p>MSI-6134 · Physiopathologie avancée · Niveau maîtrise IPSPL · Hiver 2025</p>
+</div>
+
+<div class="legend">
+  <span class="leg-item"><span class="dot dot-plus"></span>Sx / signes +</span>
+  <span class="leg-item"><span class="dot dot-minus"></span>Sx / signes absents (−)</span>
+  <span class="leg-item"><span class="dot dot-inv"></span>Investigations</span>
+  <span class="leg-item"><span class="dot dot-rx"></span>Traitement clé</span>
+  <span class="leg-item"><span class="dot dot-red"></span>Red flags / urgence</span>
+</div>
+
+<!-- ══════════════════════ HTA ══════════════════════ -->
+<div class="section">
+  <div class="section-title">HTA</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">HTA</span>
+        <div><div class="card-title">Hypertension artérielle</div><div class="card-sub">MPAC ≥ 140/90 · Silent killer</div></div>
+      </div>
+      <div class="card-body">
+        <div class="two-col">
+          <div>
+            <span class="col-label label-plus">Sx présents +</span>
+            <ul class="item-list">
+              <li class="plus">Céphalées (HTA sévère)</li>
+              <li class="plus">Étourdissements</li>
+              <li class="plus">Vision brouillée</li>
+              <li class="plus">Palpitations</li>
+              <li class="plus">Épistaxis occasionnel</li>
+              <li class="plus">Souvent ASYMPTOMATIQUE</li>
+            </ul>
+          </div>
+          <div>
+            <span class="col-label label-minus">Sx absents −</span>
+            <ul class="item-list">
+              <li class="minus">Pas de DRS d'emblée</li>
+              <li class="minus">Pas d'OMI (sans IC)</li>
+              <li class="minus">Pas de dyspnée repos</li>
+              <li class="minus">Examen souvent N</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <span class="col-label label-red">Red flags → secondaire</span>
+        <ul class="item-list">
+          <li class="red"><em>Âge &lt; 40 ans</em> · HTA &gt; 180/110 au Dx · Résistance à 3 Rx</li>
+          <li class="red">Créat ↑ &gt;30% post-IECA · Triade vasomotrice (céphalée+blushing+palpit)</li>
+          <li class="red">Hypo/hyperkaliémie · Flash OAP répétés · Souffle vasculaire à l'EP</li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-rx">Rx clé</span>
+        <ul class="item-list">
+          <li class="rx">Grossesse : Labetalol · Nifédipine · Méthyldopa (pas IECA/ARA)</li>
+          <li class="rx">HTA crise (urgence vraie) : atteinte viscérale → urgence hospitalière</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">TYPES</span>
+        <div><div class="card-title">Types d'HTA à distinguer</div><div class="card-sub">Impact sur prise en charge</div></div>
+      </div>
+      <div class="card-body">
+        <ul class="item-list">
+          <li class="neutral"><strong>Sarrau blanc</strong> (30-40%) — TA haute en bureau, N en ambulatoire → MAPA</li>
+          <li class="neutral"><strong>Masquée</strong> (10-40%) — TA N en bureau, haute en ambulatoire</li>
+          <li class="neutral"><strong>Systolique isolée</strong> — TAS ≥140, TAD &lt;90 → rigidité artérielle (&gt;50 ans)</li>
+          <li class="red"><strong>Urgence relative</strong> — TAS ≥180, TAD ≥110 <em>sans</em> atteinte organe</li>
+          <li class="red"><strong>Urgence vraie</strong> — HTA grave <em>avec</em> atteinte viscérale / létalité imminente</li>
+          <li class="red"><strong>HTA maligne</strong> — urgence vraie + rétinopathie stade IV</li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-inv">Mesures valides</span>
+        <ul class="item-list">
+          <li class="inv">MPAC-OS (BpTru) · MAPA (référence) · MPAD (2x matin + soir × 7j)</li>
+          <li class="inv">Une mesure isolée ≠ diagnostic</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════ MCAS / SCA ══════════════════════ -->
+<div class="section">
+  <div class="section-title">MCAS — Angine stable · SCA</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">ANGINE</span>
+        <div><div class="card-title">Angine stable</div><div class="card-sub">3 critères · Probabilité pré-test</div></div>
+      </div>
+      <div class="card-body">
+        <span class="col-label label-plus">3 critères (tous = typique)</span>
+        <ul class="item-list">
+          <li class="plus"><strong>1.</strong> Inconfort rétrosternal (irradiation mâchoire/cou/épaules/bras)</li>
+          <li class="plus"><strong>2.</strong> Provoqué par effort ou émotion</li>
+          <li class="plus"><strong>3.</strong> Soulagé &lt;5 min repos ou TNT</li>
+        </ul>
+        <div class="divider"></div>
+        <div class="two-col">
+          <div>
+            <span class="col-label label-plus">Sx associés +</span>
+            <ul class="item-list">
+              <li class="plus">Dyspnée · diaphorèse</li>
+              <li class="plus">Nausées · éructations</li>
+              <li class="plus">Fatigue · étourdissements</li>
+            </ul>
+          </div>
+          <div>
+            <span class="col-label label-minus">Éléments −</span>
+            <ul class="item-list">
+              <li class="minus">Dlr reproductible à la palp</li>
+              <li class="minus">Varie avec respiration/position</li>
+              <li class="minus">Soulagé par antiacide</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <span class="col-label label-inv">Investigations</span>
+        <ul class="item-list">
+          <li class="inv">ECG · Bilan lipidique · HbA1c · FSC · créat · coag</li>
+          <li class="inv">Test d'effort si prob prétest &gt;10% (ECG si interprétable)</li>
+          <li class="inv">ECG non interprétable → MIBI effort ou écho effort</li>
+          <li class="inv">Incapable à l'effort → MIBI Persantin ou Écho Dobutamine</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">SCA</span>
+        <div><div class="card-title">Syndrome coronarien aigu</div><div class="card-sub">AI · NSTEMI · STEMI</div></div>
+      </div>
+      <div class="card-body">
+        <span class="col-label label-red">Sx d'alarme SCA</span>
+        <ul class="item-list">
+          <li class="red">Inconfort thoracique &gt;20 min</li>
+          <li class="red">Angine de novo (&lt;3 mois, limite activités)</li>
+          <li class="red">Angine en crescendo (progressive, marquée)</li>
+          <li class="red">Angine post-IM</li>
+        </ul>
+        <div class="divider"></div>
+        <div class="two-col">
+          <div>
+            <span class="col-label label-plus">Sx +</span>
+            <ul class="item-list">
+              <li class="plus">Dlr &gt;intense &gt;longue qu'angine stable</li>
+              <li class="plus">Survient au repos</li>
+              <li class="plus">Non soulagée TNT/repos</li>
+              <li class="plus">Diaphorèse · nausée · fatigue</li>
+            </ul>
+          </div>
+          <div>
+            <span class="col-label label-minus">Biomarqueurs</span>
+            <ul class="item-list">
+              <li class="minus">AI : Tropo <em>négative</em></li>
+              <li class="plus">NSTEMI : Tropo + sans sus-ST</li>
+              <li class="plus">STEMI : Tropo + <em>avec</em> sus-ST</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <span class="col-label label-rx">Rx urgence STEMI</span>
+        <ul class="item-list">
+          <li class="rx">TNT s/l ×3 si TAS &gt;90 · ASA 325 mg à croquer · AMBULANCE</li>
+          <li class="rx">Reperfusion &lt;90 min (angioplastie) · sinon thrombolyse rtPA</li>
+          <li class="rx">Post-SCA : ASA 81 mg + Ticagrelor 90 mg BID × 1 an · BB · IECA · Statine haute dose</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">PROB</span>
+        <div><div class="card-title">Probabilité pré-test MCAS</div><div class="card-sub">Diamond-Forrester · % de maladie coronarienne</div></div>
+      </div>
+      <div class="card-body">
+        <table style="width:100%; border-collapse:collapse; font-size:11px;">
+          <thead>
+            <tr>
+              <th style="text-align:left; color:var(--muted); padding:4px 6px; border-bottom:1px solid var(--border);">Critères angine</th>
+              <th style="color:var(--accent); padding:4px 6px; border-bottom:1px solid var(--border);">H 30-39</th>
+              <th style="color:var(--accent); padding:4px 6px; border-bottom:1px solid var(--border);">H 50-59</th>
+              <th style="color:#f472b6; padding:4px 6px; border-bottom:1px solid var(--border);">F 30-39</th>
+              <th style="color:#f472b6; padding:4px 6px; border-bottom:1px solid var(--border);">F 50-59</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="color:var(--muted); padding:4px 6px;">1/3 (non angineuse)</td><td style="color:#2dd4a0; text-align:center; padding:4px 6px;">4%</td><td style="color:#2dd4a0; text-align:center; padding:4px 6px;">20%</td><td style="color:#2dd4a0; text-align:center; padding:4px 6px;">2%</td><td style="color:#2dd4a0; text-align:center; padding:4px 6px;">7%</td></tr>
+            <tr><td style="color:var(--muted); padding:4px 6px;">2/3 (atypique)</td><td style="color:#fbbf24; text-align:center; padding:4px 6px;">34%</td><td style="color:#fbbf24; text-align:center; padding:4px 6px;">65%</td><td style="color:#fbbf24; text-align:center; padding:4px 6px;">12%</td><td style="color:#fbbf24; text-align:center; padding:4px 6px;">33%</td></tr>
+            <tr><td style="color:var(--muted); padding:4px 6px;">3/3 (typique)</td><td style="color:#f87171; text-align:center; padding:4px 6px;">76%</td><td style="color:#f87171; text-align:center; padding:4px 6px;"><strong>93%</strong></td><td style="color:#f87171; text-align:center; padding:4px 6px;">26%</td><td style="color:#f87171; text-align:center; padding:4px 6px;">73%</td></tr>
+          </tbody>
+        </table>
+        <div class="divider"></div>
+        <ul class="item-list">
+          <li class="neutral">Faible (&lt;10%) → investigation généralement non recommandée</li>
+          <li class="neutral">Intermédiaire → test d'effort / imagerie selon ECG et capacité</li>
+          <li class="red">Élevée (&gt;90%) → investigation + traitement probable même si test −</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════ IC ══════════════════════ -->
+<div class="section">
+  <div class="section-title">Insuffisance cardiaque</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">ICFEr</span>
+        <div><div class="card-title">IC à FE réduite</div><div class="card-sub">FEVG ≤ 40% · Systolique · Souvent post-IM</div></div>
+      </div>
+      <div class="card-body">
+        <div class="two-col">
+          <div>
+            <span class="col-label label-plus">Sx IC Gauche +</span>
+            <ul class="item-list">
+              <li class="plus">Dyspnée effort → repos</li>
+              <li class="plus">Orthopnée · DPN</li>
+              <li class="plus">Toux nocturne</li>
+              <li class="plus">Crépitants bases</li>
+              <li class="plus">B3 galop · tachycardie</li>
+              <li class="plus">Fatigue · intolérance effort</li>
+            </ul>
+          </div>
+          <div>
+            <span class="col-label label-plus">Sx IC Droite +</span>
+            <ul class="item-list">
+              <li class="plus">OMI bilatéral</li>
+              <li class="plus">TVJ ↑ · RHJ +</li>
+              <li class="plus">Hépatomégalie</li>
+              <li class="plus">Ascite</li>
+              <li class="plus">Nausées · anorexie</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <span class="col-label label-inv">Investigations prioritaires</span>
+        <ul class="item-list">
+          <li class="inv">BNP : &lt;100 improbable · 100-400 zone grise · &gt;400 probable</li>
+          <li class="inv">Écho cardiaque (FEVG · valves · taille cavités)</li>
+          <li class="inv">ECG (BBG · HVG · Onde Q) · Rx pms (congestion) · FSC · créat · TSH</li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-rx">Rx ICFEr</span>
+        <ul class="item-list">
+          <li class="rx">BB + IECA/ARA + antagoniste aldostérone + iSGLT2 (piliers)</li>
+          <li class="rx">Diurétique si congestion (furosémide)</li>
+          <li class="rx">Alarme patient : gain &gt;2 kg/2j ou &gt;3 kg/7j → consulter</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">ICFEp</span>
+        <div><div class="card-title">IC à FE préservée</div><div class="card-sub">FEVG ≥ 50% · Diastolique · F âgée + HTA</div></div>
+      </div>
+      <div class="card-body">
+        <div class="two-col">
+          <div>
+            <span class="col-label label-plus">Caractéristiques +</span>
+            <ul class="item-list">
+              <li class="plus">Mêmes sx que ICFEr</li>
+              <li class="plus">HVG à l'écho</li>
+              <li class="plus">Comorbidités : HTA, DB, FA</li>
+              <li class="plus">40-60% des IC</li>
+            </ul>
+          </div>
+          <div>
+            <span class="col-label label-minus">Différences vs ICFEr −</span>
+            <ul class="item-list">
+              <li class="minus">Pas d'ATCD IM souvent</li>
+              <li class="minus">FEVG normale (&gt;50%)</li>
+              <li class="minus">Moins de méd. prouvés</li>
+              <li class="minus">Mécanisme = défaut remplissage (rigidité)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <span class="col-label label-rx">NYHA — Classes fonctionnelles</span>
+        <ul class="item-list">
+          <li class="neutral"><strong>I</strong> — Aucune limitation, AP ordinaire N</li>
+          <li class="neutral"><strong>II</strong> — Limitation modeste : fatigue à l'effort N</li>
+          <li class="neutral"><strong>III</strong> — Réduction marquée : sx à effort &lt; N</li>
+          <li class="red"><strong>IV</strong> — Sx au repos, incapacité toute AP</li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-red">Facteurs décompensation (ABCDEFGHI-RST)</span>
+        <ul class="item-list">
+          <li class="red">Anémie · Bactérie (infection) · Compliance Mx · EP · HTA · Ischémie (IM) · Rein · Sel · Thyroïde</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════ MAP / AAA ══════════════════════ -->
+<div class="section">
+  <div class="section-title">MAP · AAA</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">MAP</span>
+        <div><div class="card-title">Maladie artérielle périphérique</div><div class="card-sub">ITH ≤ 0.9 · Claudication intermittente</div></div>
+      </div>
+      <div class="card-body">
+        <div class="two-col">
+          <div>
+            <span class="col-label label-plus">Claudication +</span>
+            <ul class="item-list">
+              <li class="plus">Dlr mollets à l'effort</li>
+              <li class="plus">Reproductible · distale à l'occlusion</li>
+              <li class="plus">Soulagée &lt;10 min repos</li>
+              <li class="plus">Pouls diminués/absents</li>
+              <li class="plus">Peu de pilosité MI</li>
+              <li class="plus">Plaies chroniques (ischémie critique)</li>
+            </ul>
+          </div>
+          <div>
+            <span class="col-label label-minus">DDx −</span>
+            <ul class="item-list">
+              <li class="minus">Sténose spinale (position)</li>
+              <li class="minus">Neuropathie DB (dlr constante)</li>
+              <li class="minus">Arthrose genou/hanche</li>
+              <li class="minus">Kyste de Baker</li>
+              <li class="minus">Sx sans repos = ischémie critique → URGENCE</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <span class="col-label label-inv">ITH · Interprétation</span>
+        <ul class="item-list">
+          <li class="inv">0.9-1.4 N · 0.8-0.9 MAP légère · 0.5-0.8 MAP modérée · &lt;0.5 sévère</li>
+          <li class="inv">&gt;1.4 → calcifications (DB/IRC) → Doppler artériel préférable</li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-rx">Rx</span>
+        <ul class="item-list">
+          <li class="rx"><em>Arrêt tabagique PRIORITAIRE</em> · Marche supervisée 30-60 min ×3/sem</li>
+          <li class="rx">ASA ou Plavix · Statine · IECA · iSGLT2 · Optimiser HTA/DB/DLP</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">AAA</span>
+        <div><div class="card-title">Anévrisme aorte abdominale</div><div class="card-sub">≥ 3 cm · Mortalité 90% si rupture</div></div>
+      </div>
+      <div class="card-body">
+        <div class="two-col">
+          <div>
+            <span class="col-label label-plus">Sx présents +</span>
+            <ul class="item-list">
+              <li class="plus">Souvent asymptomatique</li>
+              <li class="plus">Douleur abdo/lombaire/flanc si symptomatique</li>
+              <li class="plus">Masse pulsatile palpable (≥5 cm : 75%)</li>
+            </ul>
+          </div>
+          <div>
+            <span class="col-label label-red">FdR +</span>
+            <ul class="item-list">
+              <li class="red">Tabac (×5 risque)</li>
+              <li class="red">Âge ≥65 · Sexe M</li>
+              <li class="red">ATCD fam · HTA · DLP</li>
+              <li class="red">MCAS/MAP/Ao autre</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <span class="col-label label-inv">Suivi écho abdo</span>
+        <ul class="item-list">
+          <li class="inv">2.5-3 cm → 10 ans · 3-3.9 cm → 3 ans · 4-4.9 cm → 1 an · 5-5.4 cm → 6 mois</li>
+          <li class="inv">Référer spécialité si ≥ 4 cm · Progression ≥5mm/6mois ou ≥10mm/12mois</li>
+          <li class="red">Chirurgie : H ≥5.5 cm · F ≥5 cm · Symptomatique · SAAQ interdit ≥5.5 cm</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════ FA / ARYTHMIES ══════════════════════ -->
+<div class="section">
+  <div class="section-title">FA · Flutter · Arythmies</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">FA</span>
+        <div><div class="card-title">Fibrillation auriculaire</div><div class="card-sub">Irrégulièrement irrégulier · Principale complication = AVC</div></div>
+      </div>
+      <div class="card-body">
+        <div class="two-col">
+          <div>
+            <span class="col-label label-plus">Sx +</span>
+            <ul class="item-list">
+              <li class="plus">Palpitations</li>
+              <li class="plus">Dyspnée · fatigue</li>
+              <li class="plus">Étourdissements</li>
+              <li class="plus">FC irrégulière</li>
+              <li class="plus">Parfois asymptomatique</li>
+            </ul>
+          </div>
+          <div>
+            <span class="col-label label-inv">Bilans</span>
+            <ul class="item-list">
+              <li class="inv">ECG · Écho cœur</li>
+              <li class="inv">TSH · FSC · E+ · Ca· Mg</li>
+              <li class="inv">Rx pms (surcharge/IC)</li>
+              <li class="inv">Holter si paroxystique</li>
+              <li class="inv">ETO si cardioversion rapide</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <span class="col-label label-rx">CHADS-65 → Anticoagulation</span>
+        <ul class="item-list">
+          <li class="rx">≥65 ans OU CHADS2 ≥1 → AOD (rivaroxaban/apixaban/dabigatran)</li>
+          <li class="rx">Valve mécanique ou sténose mitrale → Warfarine uniquement</li>
+          <li class="minus">ASA <em>non recommandé</em> en prévention AVC dans FA</li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-rx">Ctrl fréquence / rythme</span>
+        <ul class="item-list">
+          <li class="rx">Ctrl fréquence (&lt;100 btm) : BB · BCC non-DHP · Digoxine</li>
+          <li class="rx">Ctrl rythme : Amiodarone · Sotalol · Flécaïnide + BB/BCC-NDHP</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">BAV</span>
+        <div><div class="card-title">Blocs AV · À ne pas manquer</div><div class="card-sub">Progression possible vers BAV complet</div></div>
+      </div>
+      <div class="card-body">
+        <ul class="item-list">
+          <li class="neutral"><strong>BAV 1er</strong> — PR &gt;0.20 sec, tous QRS conduits — <em>bénin, surveillance</em></li>
+          <li class="neutral"><strong>BAV 2e type I (Wenckebach)</strong> — PR progressivement allongé → QRS bloqué — plus bénin</li>
+          <li class="red"><strong>BAV 2e type II</strong> — PR fixe + QRS bloqués aléatoirement — <em>URGENCE · risque BAV complet</em></li>
+          <li class="red"><strong>BAV 3e degré</strong> — Aucune conduction AV — <em>URGENCE · pacemaker</em></li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-red">Arythmies dangereuses</span>
+        <ul class="item-list">
+          <li class="red">TV · Syndrome long QT · Brugada · Pause sinusale &gt;3 sec</li>
+          <li class="red">QTc aN : ≥450 ms H · ≥460 ms F</li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-neutral" style="color:var(--muted); font-size:10px; display:inline-block; margin-bottom:6px;">ESV — Seuils de référence</span>
+        <ul class="item-list">
+          <li class="neutral">ESV &gt;5% → Holter + ECG 6 mois · &gt;10% ou &gt;10 000/24h → réf cardio</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════ TVP / EP ══════════════════════ -->
+<div class="section">
+  <div class="section-title">TVP · Embolie pulmonaire</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">TVP</span>
+        <div><div class="card-title">Thrombose veineuse profonde</div><div class="card-sub">Triade de Virchow · Score Wells TVP</div></div>
+      </div>
+      <div class="card-body">
+        <div class="two-col">
+          <div>
+            <span class="col-label label-plus">Sx +</span>
+            <ul class="item-list">
+              <li class="plus">Douleur MI (mollet)</li>
+              <li class="plus">Érythème · chaleur</li>
+              <li class="plus">Œdème unilatéral</li>
+              <li class="plus">Cordon veineux palpable</li>
+              <li class="plus">Différence mollet &gt;3 cm</li>
+            </ul>
+          </div>
+          <div>
+            <span class="col-label label-minus">DDx −</span>
+            <ul class="item-list">
+              <li class="minus">Rupture gastrocnémien</li>
+              <li class="minus">Kyste de Baker rompu</li>
+              <li class="minus">Cellulite</li>
+              <li class="minus">Insuffisance veineuse</li>
+              <li class="minus">Traumatisme musculaire</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <span class="col-label label-inv">Algorithme Wells TVP</span>
+        <ul class="item-list">
+          <li class="inv">Wells &lt;2 (improbable) → D-dimères → si − : pas TVP · si + : Doppler MI</li>
+          <li class="inv">Wells ≥2 (probable) → Doppler veineux MI directement</li>
+          <li class="inv">D-dimères : haute sensibilité, faible spécificité → utile seulement si Wells &lt;2</li>
+          <li class="neutral">Si délai &gt;4h → initier anticoagulation avant résultat (sauf CI saignement)</li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-rx">Traitement</span>
+        <ul class="item-list">
+          <li class="rx">AOD (majorité) · HBPM + Warfarine · HBPM monotx si cancer/grossesse</li>
+          <li class="rx">Durée minimale 3 mois → réévaluation selon cause / FdR récidive</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">EP</span>
+        <div><div class="card-title">Embolie pulmonaire</div><div class="card-sub">10% fatals dans l'heure · Score Wells EP</div></div>
+      </div>
+      <div class="card-body">
+        <div class="two-col">
+          <div>
+            <span class="col-label label-plus">Sx +</span>
+            <ul class="item-list">
+              <li class="plus">Dyspnée subite (75-85%)</li>
+              <li class="plus">Douleur pleurétique</li>
+              <li class="plus">Tachycardie · tachypnée</li>
+              <li class="plus">Hypoxémie · Sat ↓</li>
+              <li class="plus">Hémoptysie</li>
+              <li class="plus">Syncope · hypotension</li>
+            </ul>
+          </div>
+          <div>
+            <span class="col-label label-minus">DDx −</span>
+            <ul class="item-list">
+              <li class="minus">Pneumonie (fièvre++, toux++)</li>
+              <li class="minus">SCA (ECG + Tropo)</li>
+              <li class="minus">Pneumothorax (asymétrie)</li>
+              <li class="minus">IC (orthopnée, OMI)</li>
+              <li class="minus">Asthme/BPCO exacerbation</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <span class="col-label label-inv">Algorithme Wells EP</span>
+        <ul class="item-list">
+          <li class="inv">EP improbable (&lt;4.5) → PERC → si − : pas EP · si + → D-dimères</li>
+          <li class="inv">EP probable (≥4.5) → Angioscan ou Scintigraphie V/Q directement</li>
+          <li class="red">Haute suspicion clinique → débuter anticoag avant confirmation Dx</li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-rx">Traitement ambulatoire si :</span>
+        <ul class="item-list">
+          <li class="rx">Stable · bonne réserve cardio-pulm · observant · pas CI anticoag</li>
+          <li class="rx">Molécules idem TVP · Revoir 1-2 semaines après début traitement</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════ SYNCOPE ══════════════════════ -->
+<div class="section">
+  <div class="section-title">Syncope</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">SYNC</span>
+        <div><div class="card-title">Syncope — Classification et Red Flags</div><div class="card-sub">Perte de conscience transitoire 2nd hypoperfusion cérébrale</div></div>
+      </div>
+      <div class="card-body">
+        <div class="three-col" style="gap:10px; display:grid; grid-template-columns:1fr 1fr 1fr;">
+          <div>
+            <span class="col-label label-plus">Neurocardiogénique</span>
+            <ul class="item-list">
+              <li class="plus">Prodrome : chaleur, nausée, vision trouble</li>
+              <li class="plus">Déclencheur : douleur, émotion, chaleur, station debout</li>
+              <li class="plus">Récupération rapide · &lt;1-2 min</li>
+            </ul>
+          </div>
+          <div>
+            <span class="col-label label-minus">Orthostatique</span>
+            <ul class="item-list">
+              <li class="neutral">TA ↓ ≥20/10 mmHg en 3 min debout</li>
+              <li class="neutral">Médicaments · déshydratation · neuropathie autonome</li>
+            </ul>
+          </div>
+          <div>
+            <span class="col-label label-red">Cardiaque ⚠</span>
+            <ul class="item-list">
+              <li class="red">Sans prodrome</li>
+              <li class="red">À l'effort</li>
+              <li class="red">Décubitus / couché</li>
+              <li class="red">ATCD MCV · hx fam mort subite</li>
+              <li class="red">Palpitations précédant</li>
+            </ul>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <span class="col-label label-red">Red flags URGENCE</span>
+        <ul class="item-list">
+          <li class="red">DRS · Dyspnée · Palpitations · TV · BAV 2 type II ou 3e · Pause &gt;3 sec · Brugada · Long QT</li>
+          <li class="red">TAS &lt;90 ou &gt;180 · Tropo + · QRS aN · Anomalie structurelle (sténose Ao, MCAS, myxome)</li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-inv">Investigation minimale</span>
+        <ul class="item-list">
+          <li class="inv">ECG 12D (tous patients) · Glycémie · FSC · É+ · Créat</li>
+          <li class="inv">Holter/CardioMemo si paroxystique · Écho cardiaque si suspicion structurelle</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════ DLP / FRAMINGHAM ══════════════════════ -->
+<div class="section">
+  <div class="section-title">Dyslipidémie · Évaluation du risque CV</div>
+  <div class="grid">
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">DLP</span>
+        <div><div class="card-title">Dyslipidémie et physiopatho athérosclérose</div><div class="card-sub">Score Framingham · Cibles LDL</div></div>
+      </div>
+      <div class="card-body">
+        <span class="col-label label-plus">Physiopathologie plaque (résumé)</span>
+        <ul class="item-list">
+          <li class="neutral">Lésion endothéliale → LDL s'infiltrent → oxydation → macrophages = foam cells → noyau lipidique → plaque</li>
+          <li class="neutral">Plaque ≥75% lumière → ischémie transitoire (angine) · Rupture plaque → thrombus → SCA</li>
+          <li class="red">Plaque vulnérable : gros noyau lipidique · recouvrement mince · inflammation active</li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-inv">Dépistage (groupe PEER)</span>
+        <ul class="item-list">
+          <li class="inv">H ≥40 ans · F ≥50 ans (plus tôt si DB, HTA, tabac, obésité, MCAS fam, néphropathie chronique)</li>
+          <li class="inv">Bilan lipidique : CT · LDL · HDL · TG · Non-HDL · (ApoB si TG ≥1.5 — SCC)</li>
+        </ul>
+        <div class="divider"></div>
+        <span class="col-label label-rx">Cibles selon risque (SCC)</span>
+        <ul class="item-list">
+          <li class="rx"><em>Élevé (SRF ≥20%)</em> → Statine forte/haute · Cible LDL &lt;2 mmol/L ou réduction ≥50%</li>
+          <li class="rx"><em>Modéré (SRF 10-19%)</em> → Statine si LDL ≤3.5 · Cible LDL &lt;2 mmol/L</li>
+          <li class="rx"><em>Prévention secondaire (MCVAS)</em> → Statine max dose · LDL &lt;1.8 mmol/L</li>
+          <li class="rx"><em>HF</em> (LDL ≥5 si ≥40 ans) → Statine + iPCSK9 · Réf génétique</li>
+        </ul>
+        <div class="divider"></div>
+        <div class="badge-row">
+          <span class="badge badge-teal">Statine CI grossesse</span>
+          <span class="badge badge-blue">Pré-éclampsie = FdR CV futur (RR 2.3)</span>
+          <span class="badge badge-purple">ApoB si TG ≥1.5 (plutôt que LDL)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <span class="card-icon">ÉVAL</span>
+        <div><div class="card-title">Évaluation non effractive — maladie coronarienne</div><div class="card-sub">Choix selon ECG de repos + capacité à l'effort</div></div>
+      </div>
+      <div class="card-body">
+        <div class="algo-row">
+          <span class="algo-step">OUI effort</span>
+          <div class="algo-text">ECG interprétable → <em>ECG à l'effort</em> · ECG non interprétable (BBG, WPW, ST&gt;1mm) → <em>MIBI effort ou Écho effort</em></div>
+        </div>
+        <div class="algo-row">
+          <span class="algo-step">NON effort</span>
+          <div class="algo-text">BBG/pace → <em>MIBI Persantin ou Angio-TDM</em> · Autre ECG → <em>Écho Dobutamine · MIBI Persantin · Angio-TDM</em></div>
+        </div>
+        <div class="algo-row">
+          <span class="algo-step">Objectif</span>
+          <div class="algo-text"><em>Diagnostic</em> : suspendre anti-ischémiques 48h avant · <em>Stratification</em> : poursuivre le traitement</div>
+        </div>
+        <div class="divider"></div>
+        <table style="width:100%; border-collapse:collapse; font-size:11px;">
+          <thead>
+            <tr style="border-bottom:1px solid var(--border);">
+              <th style="text-align:left; color:var(--muted); padding:3px 6px;">Examen</th>
+              <th style="color:var(--accent); padding:3px 6px; text-align:center;">Sensibi.</th>
+              <th style="color:var(--accent); padding:3px 6px; text-align:center;">Spécifi.</th>
+              <th style="text-align:left; color:var(--muted); padding:3px 6px;">Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td style="color:var(--text); padding:3px 6px;">ECG effort</td><td style="color:#2dd4a0; text-align:center; padding:3px 6px;">68%</td><td style="color:#2dd4a0; text-align:center; padding:3px 6px;">77%</td><td style="color:var(--muted); padding:3px 6px;">Limité BBG, WPW</td></tr>
+            <tr><td style="color:var(--text); padding:3px 6px;">Écho effort</td><td style="color:#2dd4a0; text-align:center; padding:3px 6px;">79%</td><td style="color:#2dd4a0; text-align:center; padding:3px 6px;">84%</td><td style="color:var(--muted); padding:3px 6px;">Évite radiation</td></tr>
+            <tr><td style="color:var(--text); padding:3px 6px;">MIBI effort</td><td style="color:#fbbf24; text-align:center; padding:3px 6px;">84%</td><td style="color:#fbbf24; text-align:center; padding:3px 6px;">78%</td><td style="color:var(--muted); padding:3px 6px;">Patient peu échogène</td></tr>
+            <tr><td style="color:var(--text); padding:3px 6px;">Angio-TDM</td><td style="color:#f87171; text-align:center; padding:3px 6px;"><strong>96%</strong></td><td style="color:#f87171; text-align:center; padding:3px 6px;">82%</td><td style="color:var(--muted); padding:3px 6px;">Iode · calcique · jeune &lt;65 ans</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════ PHYSIOPATHO RAPIDE ══════════════════════ -->
+<div class="section">
+  <div class="section-title">Physiopathologie en 3 lignes — questions d'examen fréquentes</div>
+  <div class="grid-3">
+
+    <div class="card">
+      <div class="card-header"><span class="card-icon">PHYSIO</span><div class="card-title">Pourquoi dlr irradie au bras/mâchoire ?</div></div>
+      <div class="card-body">
+        <ul class="item-list">
+          <li class="neutral">Récepteurs nociceptifs myocardiques → influx via <strong>C8-T1 à T4</strong></li>
+          <li class="neutral">Tractus ascendant partagé avec mâchoire/cou/épaules/bras → douleur <em>référée</em></li>
+          <li class="neutral">Même dermatome que les bras → souvent bilatéral (plus fréquent)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-icon">PHYSIO</span><div class="card-title">Pourquoi le BNP est élevé dans l'IC ?</div></div>
+      <div class="card-body">
+        <ul class="item-list">
+          <li class="neutral">Surcharge volumique → <strong>étirement des myocytes ventriculaires</strong></li>
+          <li class="neutral">BNP = peptide natriurétique libéré en réponse → vasodilatation + natriurèse compensatrices</li>
+          <li class="neutral">Faux − : obésité · Faux + : MPOC sévère · Entresto</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-icon">PHYSIO</span><div class="card-title">Pourquoi FA → risque d'AVC ?</div></div>
+      <div class="card-body">
+        <ul class="item-list">
+          <li class="neutral">Activation désorganisée (350-600 btm) → <strong>perte du kick auriculaire</strong></li>
+          <li class="neutral">Stagnation sang oreillette G (auricule) → <strong>thrombus</strong> → embolisation cérébrale</li>
+          <li class="neutral">Anticoagulation vise à prévenir ce thrombus (pas l'arythmie elle-même)</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-icon">PHYSIO</span><div class="card-title">Pourquoi sevrage BB → rebond HTA/tachycardie ?</div></div>
+      <div class="card-body">
+        <ul class="item-list">
+          <li class="neutral">Sous BB chronique → <strong>surexpression des récepteurs β</strong> par compensation</li>
+          <li class="neutral">Arrêt brutal → levée du frein sympathique → hyperstimulation β1 → ↑FC ↑TA ↑contractilité</li>
+          <li class="neutral">Sevrage graduel recommandé · Délai d'apparition : 24-72h</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-icon">PHYSIO</span><div class="card-title">Pourquoi IECA contre-indiqué si sténose rénale ?</div></div>
+      <div class="card-body">
+        <ul class="item-list">
+          <li class="neutral">Sténose → ↓pression perfusion → ↑Ang II → <strong>vasoconstriction efférente</strong> → maintien DFG</li>
+          <li class="neutral">IECA bloque Ang II → dilatation efférente → ↓pression de filtration → <strong>créat ↑ &gt;30%</strong></li>
+          <li class="neutral">Signe d'alerte HTA secondaire rénovasculaire</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="card-icon">PHYSIO</span><div class="card-title">Différence EP vs TVP : physiopatho</div></div>
+      <div class="card-body">
+        <ul class="item-list">
+          <li class="neutral">TVP : thrombus veineux → stase + hypercoagulabilité + lésion endothéliale (Virchow)</li>
+          <li class="neutral">EP : embole migre vers artère pulmonaire → ↑espace mort alvéolaire → bronchoconstriction → ↑PAP → défaillance VD</li>
+          <li class="red">10% EP fatals dans l'heure · 25-50% EP ont sx de TVP concurrent</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div style="text-align:center; color:var(--muted); font-size:11px; margin-top:2rem; padding-top:1rem; border-top:1px solid var(--border);">
+  MSI-6134 · Catherine Villemure, MSc, IPSPL · Hiver 2025 · Révision personnelle — ne pas substituer aux notes de cours officielles
+</div>
+
+</body>
+</html>
